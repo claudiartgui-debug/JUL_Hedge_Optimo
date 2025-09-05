@@ -14,7 +14,13 @@ import io
 st.set_page_config(layout="wide")
 
 # inputs
-name = "https://raw.githubusercontent.com/claudiartgui-debug/JUL_Hedge_Optimo/main/hedge_optimo_streamlit_JUL.xlsx"
+url_excel = "https://raw.githubusercontent.com/claudiartgui-debug/JUL_Hedge_Optimo/main/hedge_optimo_streamlit_JUL.xlsx"
+
+# Descargar el archivo desde GitHub
+response = requests.get(url_excel)
+
+# Guardarlo en memoria como "archivo"
+name = io.BytesIO(response.content)
 
 fecha = "JUL-25"
 PPA_price = list(np.arange(38, 42.5, 0.25).round(2))
@@ -161,6 +167,7 @@ with colB:
 
 
 # 38 - 42.5  : steps = 0.25
+
 
 
 
