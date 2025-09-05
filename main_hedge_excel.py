@@ -26,8 +26,24 @@ fecha = "JUL-25"
 PPA_price = list(np.arange(38, 42.5, 0.25).round(2))
 
 # tablas inputs 
-df_margen, df_cmg, df_margenPPA, df_margenPPA_annually = margen_ppa(name, PPA_price)
-df_margen_chilca2, df_cmg_chilca2 , df_margenPPA_chilca2, df_margenPPA_annually_chilca2 = margen_ppa_withoutChilca2(name, PPA_price)
+
+# ==== CARGA DE DATOS CON DEBUG ===== #
+try:
+    df_margen, df_cmg, df_margenPPA, df_margenPPA_annually = margen_ppa(name, PPA_price)
+    st.success("Carga correcta de margen_ppa ✅")
+except Exception as e:
+    st.error(f"Error en margen_ppa: {e}")
+    st.stop()
+
+try:
+    df_margen_chilca2, df_cmg_chilca2 , df_margenPPA_chilca2, df_margenPPA_annually_chilca2 = margen_ppa_withoutChilca2(name, PPA_price)
+    st.success("Carga correcta de margen_ppa_withoutChilca2 ✅")
+except Exception as e:
+    st.error(f"Error en margen_ppa_withoutChilca2: {e}")
+    st.stop()
+    
+#df_margen, df_cmg, df_margenPPA, df_margenPPA_annually = margen_ppa(name, PPA_price)
+#df_margen_chilca2, df_cmg_chilca2 , df_margenPPA_chilca2, df_margenPPA_annually_chilca2 = margen_ppa_withoutChilca2(name, PPA_price)
 
 columns_mw = df_margenPPA_annually.columns.tolist()[7:]
 # redondeo
@@ -167,6 +183,7 @@ with colB:
 
 
 # 38 - 42.5  : steps = 0.25
+
 
 
 
