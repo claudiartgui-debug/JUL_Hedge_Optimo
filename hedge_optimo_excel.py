@@ -50,15 +50,13 @@ def margen_ppa(name: str , PPA_price: list) -> pd.DataFrame:
     return df_margen, df_cmg, df_margenPPA, df_margenPPA_annually
 
 @st.cache_data
-def margen_ppa_withoutChilca2(name: str , name1 : str , PPA_price: list) -> pd.DataFrame:
+def margen_ppa_withoutChilca2(name: str , PPA_price: list) -> pd.DataFrame:
     cost = 1.5 
     df_list = []
     
-    r = requests.get(name1)
-    df_margen = pd.read_parquet(io.BytesIO(r.content)).rename(columns={"value_musd": "margin_EEP_musd"})
+    df_margen = pd.read_excel(name, sheet_name='margen_EEP_withoutChilca2', dtype={'sample': str}).rename(columns={"value_musd": "margin_EEP_musd"})
     df_margen["sample"] = df_margen["sample"].astype(str)
     
-    df_margen = df_margen[~((df_margen['asset'] == "Chilca2") & ( (df_margen['year'] >= 2027)  ))]
     df_margen = df_margen.groupby(['simulation', 'scenario', 'sample', 'year', 'month'], as_index=False)['margin_EEP_musd'].sum()
     df_cmg = pd.read_excel(name , sheet_name='CMG', dtype={'sample': str}).rename(columns={"precio_medio": "spot_price"})
     
@@ -247,6 +245,7 @@ def stats_graphic(df_stats: pd.DataFrame, col: str, year: int, PPA_price: float)
     ax.legend(["S-P at Risk (ES@P90)"], loc="lower right")
     fig.tight_layout()
     return fig
+
 
 
 
