@@ -36,19 +36,21 @@ def margen_ppa(name: str , PPA_price: list) -> pd.DataFrame:
         df_temp = df_margenPPA.copy()
         df_temp["ppa_price"] = price
         df_list.append(df_temp)
+    
     df_margenPPA = pd.concat(df_list, ignore_index=True)
     
     capacidad = list(range(1,400,1))
-    new_cols = {}
     
+    new_cols = {}
     for c in capacidad:
         new_cols[f'margen+PPA_{c}'] = (
             df_margenPPA['margin_EEP_musd'] 
             + (c * df_margenPPA['days_in_month'] * 24) 
             * (df_margenPPA['ppa_price'] - cost - df_margenPPA['spot_price']) / 1000000
-        )    agg_dict = {'margin_EEP_musd': 'sum' ,"spot_price":'mean'}
+        )
         
     df_margenPPA = pd.concat([df_margenPPA, pd.DataFrame(new_cols)], axis=1)
+    agg_dict = {'margin_EEP_musd': 'sum' ,"spot_price":'mean'}
     agg_dict.update({f'margen+PPA_{c}': 'sum'  for c in capacidad })
     
     df_margenPPA_annually = df_margenPPA.groupby(
@@ -85,12 +87,17 @@ def margen_ppa_withoutChilca2(name: str , PPA_price: list) -> pd.DataFrame:
     
     capacidad = list(range(1,400,1))
     
+    new_cols = {}
     for c in capacidad:
-        df_margenPPA[f'margen+PPA_{c}'] = df_margenPPA['margin_EEP_musd']+ (c *df_margenPPA['days_in_month'] * 24) * (df_margenPPA['ppa_price']-  cost - df_margenPPA['spot_price'] ) / 1000000
-    
+        new_cols[f'margen+PPA_{c}'] = (
+            df_margenPPA['margin_EEP_musd'] 
+            + (c * df_margenPPA['days_in_month'] * 24) 
+            * (df_margenPPA['ppa_price'] - cost - df_margenPPA['spot_price']) / 1000000)
+        
+    df_margenPPA = pd.concat([df_margenPPA, pd.DataFrame(new_cols)], axis=1)
     agg_dict = {'margin_EEP_musd': 'sum' ,"spot_price":'mean'}
-    
     agg_dict.update({f'margen+PPA_{c}': 'sum'  for c in capacidad })
+    
     df_margenPPA_annually = df_margenPPA.groupby(
         ['simulation', 'scenario', 'sample', 'year','ppa_price'], as_index=False
     ).agg(agg_dict)
@@ -253,6 +260,7 @@ def stats_graphic(df_stats: pd.DataFrame, col: str, year: int, PPA_price: float)
     ax.legend(["S-P at Risk (ES@P90)"], loc="lower right")
     fig.tight_layout()
     return fig
+
 
 
 
